@@ -1,0 +1,22 @@
+namespace Solution {
+    open Microsoft.Quantum.Primitive;
+    open Microsoft.Quantum.Canon;
+    operation Solve (st:String) : ()
+    {
+        body
+        {
+            if(st=="A"){
+                Message("T");
+            }
+            elif(st=="T"){
+                Message("A");
+            }
+            elif(st=="G"){
+                Message("C");
+            }
+            elif(st=="C"){
+                Message("G");
+            }
+        }
+    }
+}
