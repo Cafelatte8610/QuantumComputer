@@ -1,0 +1,32 @@
+namespace Quantum.Bell
+{
+    open Microsoft.Quantum.Primitive;
+
+    operation Set (desired:Result,q1:Qubit) : ()
+    {
+        body
+        {
+            let current=M(q1);
+            if(desired!=current){
+                X(q1);
+            }
+        }
+    }
+
+    operation BellTest(count:Int,initial:Result):(Int,Int){
+        body{
+            mutable mumOnes=0;
+            using(qubit=Qubit[1]){
+                for(test in 1..count){
+                    Set (initial,qubits[0]);
+                    let res =M(qubits[0]);
+                    if(res==One){
+                        set numOnse=numOnse+1;
+                    }
+                }
+                Set(Zero,qubits[0]);
+            }
+            return (count-numOnse,numOnse);
+        }
+    }
+}
