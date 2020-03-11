@@ -1,32 +1,42 @@
-namespace Quantum.Bell
-{
+namespace Microsoft.Quantum.Examples.Teleportation {
     open Microsoft.Quantum.Primitive;
+    open Microsoft.Quantum.Canon;
 
-    operation Set (desired:Result,q1:Qubit) : ()
-    {
-        body
-        {
-            let current=M(q1);
-            if(desired!=current){
-                X(q1);
+    operation Teleport(msg : Qubit, there : Qubit) : () {
+        body {
+                using (register = Qubit[1]) {
+                let here = register[0];
+
+                H(here);
+                CNOT(here, there);
+                CNOT(msg, here);
+                H(msg);
+                if (M(msg) == One)  { Z(there); }
+                if (M(here) == One) { X(there); }
+
+                Reset(here);
             }
+
         }
     }
 
-    operation BellTest(count:Int,initial:Result):(Int,Int){
-        body{
-            mutable mumOnes=0;
-            using(qubit=Qubit[1]){
-                for(test in 1..count){
-                    Set (initial,qubits[0]);
-                    let res =M(qubits[0]);
-                    if(res==One){
-                        set numOnse=numOnse+1;
-                    }
-                }
-                Set(Zero,qubits[0]);
+    operation TeleportClassicalMessage(message : Bool) : Bool {
+        body {
+            mutable measurement = false;
+
+            using (register = Qubit[2]) {
+                let msg = register[0];
+                let there = register[1];
+                if (message) { X(msg); }
+            
+                Teleport(msg, there);
+
+                if (M(there) == One) { set measurement = true; }
+
+                ResetAll(register);
             }
-            return (count-numOnse,numOnse);
+
+            return measurement;
         }
     }
 }
